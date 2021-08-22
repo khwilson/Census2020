@@ -2,7 +2,6 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-import pandas as pd
 import pytest
 
 from census2020 import parsers
@@ -47,3 +46,12 @@ def test_parse_census_part3(unzipped_fixture: Path):
     df = parsers.parse_census_part3(filename).to_pandas()
     assert (df["STUSAB"] == "WY").all()
     assert "P0050001" in df.columns
+
+
+def test_parse_all(fixtures_path: Path):
+    df = parsers.parse_all(fixtures_path / "wy2020.pl.zip").to_pandas()
+    assert (df["STUSAB"] == "WY").all()
+    assert "P0050001" in df.columns
+    assert "P0030001" in df.columns
+    assert "P0010001" in df.columns
+    assert "COUNTYCC" in df.columns

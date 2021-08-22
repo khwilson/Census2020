@@ -516,6 +516,15 @@ def parse_census_geo(filename: FilenameType) -> pa.Table:
 
 
 def parse_all(filename: FilenameType) -> pa.Table:
+    """
+    From a ZIP file of PL94 data, parse all subtables into a single table
+
+    Args:
+        filename: The file (should end in .pl.zip)
+
+    Returns:
+        A pyarrow Table version of the data
+    """
     with tempfile.TemporaryDirectory() as tmp:
         tmpdir = Path(tmp)
         with zipfile.ZipFile(filename, "r") as zfile:

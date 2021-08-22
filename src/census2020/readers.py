@@ -1,32 +1,59 @@
 from pathlib import Path
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple, TypeVar, Union
 
 import pyarrow as pa
 import pyarrow.dataset as ds
-import pyarrow.parquet as pq
 import us
 
 from census2020.types import FilenameType
 
+T = TypeVar("T")
+
+
+def _wrap_list(opt: Optional[Union[T, List[T], Tuple[T, ...]]]) -> List[T]:
+    if opt is None:
+        return []
+    if isinstance(opt, (list, tuple)):
+        return list(opt)
+    return [opt]
+
 
 def read_filtered_dataset(
     filename: FilenameType,
-    states: Optional[List[str]] = None,
-    level: Optional[str] = None,
+    states: Optional[Union[str, List[str]]] = None,
+    levels: Optional[Union[str, List[str]]] = None,
+    columns: Optional[Union[str, List[str]]] = None,
 ) -> pa.Table:
     basedir = Path(filename)
 
-    states = states or []
+    states = _wrap_list(states)
     state_objs = [us.states.lookup(state) for state in states]
     if state_objs:
-        paths = [basedir / f"{state.abbr.lower()}.parquet" for state in state_objs]
+        paths: Union[Path, List[Path]] = [
+            basedir / f"{state.abbr.lower()}.parquet" for state in state_objs
+        ]
     else:
         paths = basedir
-    print(paths)
+
     dataset = ds.dataset(paths, format="parquet")
 
-    filter_expression = ds.scalar(1) == ds.scalar(1)  # Just get a TRUE to & to
-    if level is not None:
-        filter_expression &= ds.field("SUMLEV") == level
+    filter_expression = ds.scalar(1) == ds.scalar(1)
+    levels = _wrap_list(levels)
+    if levels:
+        filter_expression &= ds.field("SUMLEV").isin(levels)
 
-    return dataset.to_table(filter=filter_expression)
+    columns = _wrap_list(columns)
+    if columns:
+        d_columns: Optional[Dict[str, ds.Expression]] = {}
+
+        # Insert default columns. For now just GEOID
+        for key in ["GEOID"]:
+            if key not in columns:
+                d_columns[key] = ds.field(key)
+
+        # Append all other columns
+        d_columns.update({key: ds.field(key) for key in columns})
+    else:
+        d_columns = None
+
+    return dataset.to_table(filter=filter_expression, columns=d_columns)

@@ -1,9 +1,9 @@
 import tempfile
-import zipfile
 from pathlib import Path
 
 import pyarrow.parquet as pq
 import pytest
+import us
 
 from census2020 import parsers, readers
 from census2020.constants import SummaryLevel
@@ -27,12 +27,16 @@ def dataset_location(fixtures_path: Path) -> Path:
 
 
 def test_read_filtered_dataset(dataset_location: Path):
+    df = readers.read_filtered_dataset(
+        dataset_location,
+        states=["ri", "wy"],
+        levels=SummaryLevel.STATE_COUNTY,
+        columns="P0010001",
+    ).to_pandas()
 
-    assert (
-        len(
-            readers.read_filtered_dataset(
-                dataset_location, states=["ri", "wy"], level=SummaryLevel.STATE_COUNTY
-            ).to_pandas()
-        )
-        == 28
-    )
+    # There are 28 counties in RI and WY combined
+    assert len(df) == 28
+
+    # Make sure GEOID is included and there are 5 RI counties and 23 Wyoming counties
+    assert (df["GEOID"].str[-5:-3] == us.states.WY.fips).sum() == 23
+    assert (df["GEOID"].str[-5:-3] == us.states.RI.fips).sum() == 5
