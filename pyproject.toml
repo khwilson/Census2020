@@ -6,6 +6,25 @@ packages = [
     { include = "census2020", from = "src" }
 ]
 authors = ["Kevin Wilson <khwilson@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/khwilson/Census2020"
+repository = "https://github.com/khwilson/Census2020"
+keywords = ["census", "pl94", "decennial", "redistricting"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10"
+]
+include = ["LICENSE.md"]
+
 
 [tool.poetry.dependencies]
 python = "^3.7.1"
