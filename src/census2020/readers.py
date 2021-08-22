@@ -44,7 +44,7 @@ def read_filtered_dataset(
 
     columns = _wrap_list(columns)
     if columns:
-        d_columns: Optional[Dict[str, ds.Expression]] = {}
+        d_columns: Dict[str, ds.Expression] = {}
 
         # Insert default columns. For now just GEOID
         for key in ["GEOID"]:
@@ -53,7 +53,8 @@ def read_filtered_dataset(
 
         # Append all other columns
         d_columns.update({key: ds.field(key) for key in columns})
+        kwarg_columns: Optional[Dict[str, ds.Expression]] = d_columns
     else:
-        d_columns = None
+        kwarg_columns = None
 
-    return dataset.to_table(filter=filter_expression, columns=d_columns)
+    return dataset.to_table(filter=filter_expression, columns=kwarg_columns)
