@@ -49,6 +49,22 @@ for state in sorted(set(us.STATES) | {us.states.DC}):
     print(f"Done with {state.name}")
 ```
 
+### Historical data
+
+There's a good chance you're downloading this data to compare it to historical data.
+If so, you can download the PL94 data from the 2010 Census similarly to above. Just
+run
+
+```bash
+census2020 pull-all --output data2010 --year 2010
+```
+
+Or if the CLI doesn't work for you, change the loop above to read:
+
+```python
+table = downloader.get_state(state.abbr, year=2010)
+```
+
 ### Reading the data
 
 Reading in all the data into memory can be a bit of a difficult task, so we have
@@ -70,7 +86,8 @@ df = readers.read_filtered_dataset(
 ).to_pandas()
 ```
 
-Here `"data"` is the location to which you downloaded the Census data.
+Here `"data"` is the location to which you downloaded the Census data, which can be
+either the 2020 or 2010 data.
 
 Each of `states`, `columns`, and `levels` can be either singular values or lists of
 values. If no value is specified, then all states, columns, and levels available
