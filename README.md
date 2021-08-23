@@ -76,6 +76,10 @@ Each of `states`, `columns`, and `levels` can be either singular values or lists
 values. If no value is specified, then all states, columns, and levels available
 will be returned.
 
+## Codebook
+
+More detail on the information in these files is available from the [Census Bureau](https://www.census.gov/programs-surveys/decennial-census/about/rdo/summary-files.html). In particular, a summary of the fields meanings is available in [this Excel file](https://www2.census.gov/programs-surveys/decennial/rdo/about/2020-census-program/Phase3/SupportMaterials/2020_PLSummaryFile_FieldNames.xlsx), reporduced in this repo as `field_names.xlsx`.
+
 ## License
 
 MIT
