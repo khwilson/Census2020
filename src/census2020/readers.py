@@ -24,6 +24,21 @@ def read_filtered_dataset(
     levels: Optional[Union[str, List[str]]] = None,
     columns: Optional[Union[str, List[str]]] = None,
 ) -> pa.Table:
+    """
+    Read in a filtered dataset from a collection of parquet files. Note that you
+    wlll _probably_ want to call `.to_pandas()` on what gets returned.
+
+    Args:
+        filename: The location of your parquet file(s)
+        states: The states whose data you'd like to pull. None means all
+        levels: The geographic levels of data you'd like to examine. None means all
+        columns: The columns you'd like to pull. See the README for how to interpret
+            column names. None means all columns
+
+    Returns:
+        A pyarrow Table with the requested data. You probably want to call
+        `.to_pandas()` on what is returned
+    """
     basedir = Path(filename)
 
     states = _wrap_list(states)
