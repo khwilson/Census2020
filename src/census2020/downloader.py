@@ -10,19 +10,24 @@ import us
 from census2020.parsers import parse_all
 
 BASE_URL = "https://www2.census.gov/programs-surveys/decennial/2020/data/01-Redistricting_File--PL_94-171/"
+BASE_URL_2010 = "https://www2.census.gov/census_2010/01-Redistricting_File--PL_94-171/"
 
 
-def get_state(state: str, max_attempts: int = 3) -> pa.Table:
+def get_state(state: str, max_attempts: int = 3, year: int = 2020) -> pa.Table:
     """
     Download the data for a specific state and parse it into a pyarrow Table
 
     Args:
         state: The name of the state (can be an abbreviation or full name)
         max_attempts: The maximum number of attempts to pull the data from the Census
+        year: Which year's data to download. Only 2020 and 2010 are supported currently
 
     Returns:
         A pyarrow Table with the combined data
     """
+    if year not in [2010, 2020]:
+        raise ValueError(f"year must be 2010 or 2020, not {year}")
+
     state_obj = us.states.lookup(state)
     if not state_obj:
         raise ValueError(f"Do not recognize state {state}")

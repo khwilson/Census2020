@@ -33,13 +33,20 @@ def pull_command(state: str, output: str):
     type=click.Path(file_okay=False, dir_okay=True),
     help="The directory to store the output",
 )
-def pull_all_command(output: Optional[str] = None):
+@click.option(
+    "--year",
+    "-y",
+    type=click.Choice(["2010", "2020"]),
+    default=2020,
+    help="Which year's data to download",
+)
+def pull_all_command(year: str, output: Optional[str] = None):
     """ Pull data for all states """
     output_dir = Path(output or ".")
 
     output_dir.mkdir(exist_ok=True, parents=True)
     for state in tqdm(set(us.STATES) | {us.states.DC}):
-        table = downloader.get_state(state.abbr)
+        table = downloader.get_state(state.abbr, year=int(year))
         pq.write_table(table, output_dir / f"{state.abbr.lower()}.parquet")
 
 
